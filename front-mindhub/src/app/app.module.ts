@@ -33,6 +33,10 @@ import { SubMenuCustomContextMenuComponent } from './main/extensions/context-men
 
 const appRoutes: Routes = [
   {
+    path: 'mindhub',
+    loadChildren: () => import('./main/mindhub/mindhub.module').then(m => m.MindhubModule)
+  },
+  {
     path: 'dashboard',
     loadChildren: () => import('./main/dashboard/dashboard.module').then(m => m.DashboardModule)
   },

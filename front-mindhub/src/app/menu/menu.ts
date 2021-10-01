@@ -3,6 +3,36 @@ import { CoreMenu } from '@core/types';
 //? DOC: http://localhost:7777/demo/vuexy-angular-admin-dashboard-template/documentation/guide/development/navigation-menus.html#interface
 
 export const menu: CoreMenu[] = [
+  //mindhub
+  {
+    id: 'mindhub',
+    title: 'Mindhub',
+    type: 'collapsible',
+    // role: ['Admin'], //? To hide collapsible based on user role
+    icon: 'feather',
+    badge: {
+      title: '1',
+      classes: 'badge-light-info badge-pill'
+    },
+    children: [
+      {
+        id: 'tempogramme',
+        title: 'Tempogramme',
+        type: 'item',
+        role: ['Admin'], //? To set multiple role: ['Admin', 'Client']
+        icon: 'circle',
+        url: 'mindhub/tempogramme'
+      },
+      {
+        // If role is not assigned will be display to all
+        id: 'procupo',
+        title: 'Procupo',
+        type: 'item',
+        icon: 'circle',
+        url: 'mindhub/procupo'
+      }
+    ]
+  },
   // Dashboard
   {
     id: 'dashboard',
