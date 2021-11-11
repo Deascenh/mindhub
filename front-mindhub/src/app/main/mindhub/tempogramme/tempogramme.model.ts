@@ -1,4 +1,4 @@
-export class EventRef {
+export class Tempogramme {
   id? = undefined;
   url: string;
   title: string = '';

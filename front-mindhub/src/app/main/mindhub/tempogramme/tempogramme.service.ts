@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { EventRef } from './tempogramme.model';
+import { Tempogramme } from './tempogramme.model';
 @Injectable()
 export class TempogrammeService implements Resolve<any> {
   // Public
@@ -122,7 +122,7 @@ export class TempogrammeService implements Resolve<any> {
    * @param eventForm
    */
   addEvent(eventForm) {
-    const newEvent = new EventRef();
+    const newEvent = new Tempogramme();
     newEvent.url = eventForm.url;
     newEvent.title = eventForm.title;
     newEvent.start = eventForm.start;
@@ -143,7 +143,7 @@ export class TempogrammeService implements Resolve<any> {
    * @param eventRef
    */
   updateCurrentEvent(eventRef) {
-    const newEvent = new EventRef();
+    const newEvent = new Tempogramme();
     newEvent.allDay = eventRef.event.allDay;
     newEvent.id = parseInt(eventRef.event.id);
     newEvent.url = eventRef.event.url;

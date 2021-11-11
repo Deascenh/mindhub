@@ -19,11 +19,11 @@ export class TempogrammeEventSidebarComponent implements OnInit {
   public event: EventRef;
   public isDataEmpty;
   public selectLabel = [
-    { label: 'Business', bullet: 'primary' },
-    { label: 'Personal', bullet: 'danger' },
-    { label: 'Family', bullet: 'warning' },
-    { label: 'Holiday', bullet: 'success' },
-    { label: 'ETC', bullet: 'info' }
+    { label: 'Professionnel', bullet: 'danger' },
+    { label: 'Social', bullet: 'primary' },
+    { label: 'Personnel', bullet: 'success' },
+    { label: 'Famille', bullet: 'warning' },
+    { label: 'A faire', bullet: 'info' }
   ];
   public selectGuest = [
     { name: 'Jane Foster', avatar: 'assets/images/avatars/1-small.png' },

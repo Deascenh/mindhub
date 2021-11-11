@@ -3,6 +3,8 @@ import { Component, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/co
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CalendarOptions, EventClickArg } from '@fullcalendar/angular';
+import frLocale from '@fullcalendar/core/locales/fr';
+import enLocale from '@fullcalendar/core/locales/en-gb';
 
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
@@ -23,6 +25,9 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
   public event;
 
   public calendarOptions: CalendarOptions = {
+    locales: [frLocale, enLocale],
+    locale: 'fr',
+    firstDay: 1,
     headerToolbar: {
       start: 'sidebarToggle, prev,next, title',
       end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
@@ -34,7 +39,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
     eventResizableFromStart: true,
     selectable: true,
     selectMirror: true,
-    dayMaxEvents: 2,
+    dayMaxEvents: 3,
     navLinks: true,
     eventClick: this.handleUpdateEventClick.bind(this),
     eventClassNames: this.eventClass.bind(this),
@@ -69,11 +74,11 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
    */
   eventClass(s) {
     const calendarsColor = {
-      Business: 'primary',
-      Holiday: 'success',
-      Personal: 'danger',
-      Family: 'warning',
-      ETC: 'info'
+      Professionnel: 'danger',
+      Social: 'primary',
+      Personnel: 'success',
+      Famille: 'warning',
+      'A faire': 'info'
     };
 
     const colorName = calendarsColor[s.event._def.extendedProps.calendar];

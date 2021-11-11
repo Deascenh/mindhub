@@ -19,7 +19,6 @@ export const menu: CoreMenu[] = [
         id: 'tempogramme',
         title: 'Tempogramme',
         type: 'item',
-        role: ['Admin'], //? To set multiple role: ['Admin', 'Client']
         icon: 'circle',
         url: 'mindhub/tempogramme'
       },

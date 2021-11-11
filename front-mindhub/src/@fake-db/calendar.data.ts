@@ -7,7 +7,7 @@ export class CalendarFakeData {
       start: new Date(),
       end: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
       allDay: false,
-      calendar: 'Business',
+      calendar: 'Professionnel',
       extendedProps: {}
     },
     {
@@ -17,7 +17,7 @@ export class CalendarFakeData {
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -11),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -10),
       allDay: true,
-      calendar: 'Business',
+      calendar: 'Professionnel',
       extendedProps: {}
     },
     {
@@ -27,7 +27,7 @@ export class CalendarFakeData {
       allDay: true,
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -9),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -7),
-      calendar: 'Holiday',
+      calendar: 'Social',
       extendedProps: {}
     },
     {
@@ -37,7 +37,7 @@ export class CalendarFakeData {
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -11),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -10),
       allDay: true,
-      calendar: 'Personal',
+      calendar: 'Personnel',
       extendedProps: {}
     },
     {
@@ -47,7 +47,7 @@ export class CalendarFakeData {
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -13),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -12),
       allDay: true,
-      calendar: 'ETC',
+      calendar: 'A faire',
       extendedProps: {
         location: 'Chicago',
         description: 'on a Trip',
@@ -61,7 +61,7 @@ export class CalendarFakeData {
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -13),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -12),
       allDay: true,
-      calendar: 'Personal',
+      calendar: 'Personnel',
       extendedProps: {}
     },
     {
@@ -71,7 +71,7 @@ export class CalendarFakeData {
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -13),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -12),
       allDay: true,
-      calendar: 'Family',
+      calendar: 'Famille',
       extendedProps: {
         location: 'Moscow',
         description: 'The party club'
@@ -84,7 +84,7 @@ export class CalendarFakeData {
       start: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -13),
       end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, -12),
       allDay: true,
-      calendar: 'Business',
+      calendar: 'Professionnel',
       extendedProps: {
         location: 'Japan',
         description: 'weekend Drive'
@@ -103,7 +103,7 @@ export class CalendarFakeData {
           ? new Date(new Date().getFullYear() + 1, 0, 1)
           : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
       allDay: true,
-      calendar: 'Business',
+      calendar: 'Professionnel',
       extendedProps: {}
     },
     {
@@ -119,15 +119,15 @@ export class CalendarFakeData {
           ? new Date(new Date().getFullYear() - 1, 0, 1)
           : new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
       allDay: true,
-      calendar: 'Personal',
+      calendar: 'Personnel',
       extendedProps: {}
     }
   ];
   public static calendar = [
-    { id: 1, filter: 'Business', color: 'primary', checked: true },
-    { id: 2, filter: 'Holiday', color: 'success', checked: true },
-    { id: 3, filter: 'Personal', color: 'danger', checked: true },
-    { id: 4, filter: 'Family', color: 'warning', checked: true },
-    { id: 5, filter: 'ETC', color: 'info', checked: true }
+    { id: 1, filter: 'Professionnel', color: 'danger', checked: true },
+    { id: 2, filter: 'Social', color: 'primary', checked: true },
+    { id: 3, filter: 'Personnel', color: 'success', checked: true },
+    { id: 4, filter: 'Famille', color: 'warning', checked: true },
+    { id: 5, filter: 'A faire', color: 'info', checked: true }
   ];
 }
