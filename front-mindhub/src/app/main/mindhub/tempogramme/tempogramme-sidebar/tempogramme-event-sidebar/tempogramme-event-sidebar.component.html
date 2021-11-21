@@ -20,7 +20,7 @@
             class="form-control"
             id="title"
             name="title"
-            placeholder="Event Title"
+            placeholder="Titre de l'évenement"
             required
             [(ngModel)]="event.title"
             [class.error]="eventForm.submitted && formNameRef.invalid"
@@ -129,7 +129,7 @@
             type="text"
             class="form-control"
             id="event-location"
-            placeholder="Enter Location"
+            placeholder="Indiquer un lieu"
             [(ngModel)]="event.extendedProps.location"
             name="location"
           />

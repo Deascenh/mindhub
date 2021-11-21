@@ -4,6 +4,7 @@ import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.s
 
 import { EventRef } from 'app/main/apps/calendar/calendar.model';
 import { TempogrammeService } from '../../tempogramme.service';
+import { French } from "flatpickr/dist/l10n/fr"
 
 @Component({
   selector: 'app-tempogramme-event-sidebar',
@@ -35,12 +36,16 @@ export class TempogrammeEventSidebarComponent implements OnInit {
   ];
   public startDateOptions = {
     altInput: true,
+    locale: French,
+    altFormat: 'D j F Y, à H\\hi',
     mode: 'single',
     altInputClass: 'form-control flat-picker flatpickr-input invoice-edit-input',
     enableTime: true
   };
   public endDateOptions = {
     altInput: true,
+    locale: French,
+    altFormat: 'D j F Y, à H\\hi',
     mode: 'single',
     altInputClass: 'form-control flat-picker flatpickr-input invoice-edit-input',
     enableTime: true
@@ -107,6 +112,7 @@ export class TempogrammeEventSidebarComponent implements OnInit {
   ngOnInit(): void {
     // Subscribe to current event changes
     this._tempogrammeService.onCurrentEventChange.subscribe(response => {
+      console.log(response)
       this.event = response;
 
       // If Event is available

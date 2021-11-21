@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     itemOperations: ['get', 'put', 'delete'],
     mercure: true,
 )]
-class Greeting
+class Event
 {
     /**
      * The entity ID

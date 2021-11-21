@@ -122,6 +122,7 @@ export class TempogrammeService implements Resolve<any> {
    * @param eventForm
    */
   addEvent(eventForm) {
+    console.log('addEvent', eventForm);
     const newEvent = new Tempogramme();
     newEvent.url = eventForm.url;
     newEvent.title = eventForm.title;
