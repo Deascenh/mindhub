@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Event, EventCategory } from '../models';
+import { EventDataService } from './data/event-data.service';
 
-import { Tempogramme } from './tempogramme.model';
 @Injectable()
 export class TempogrammeService implements Resolve<any> {
   // Public
-  public events;
-  public calendar;
+  public events: Event[];
+  public categories: EventCategory[];
   public currentEvent;
   public tempEvents;
 
@@ -22,7 +23,11 @@ export class TempogrammeService implements Resolve<any> {
    *
    * @param {HttpClient} _httpClient
    */
-  constructor(private _httpClient: HttpClient) {
+  constructor(
+    private _httpClient: HttpClient,
+    private eventData: EventDataService,
+    private eventCategoryData: EventDataService,
+  ) {
     this.onEventChange = new BehaviorSubject({});
     this.onCurrentEventChange = new BehaviorSubject({});
     this.onCalendarChange = new BehaviorSubject({});
@@ -37,6 +42,7 @@ export class TempogrammeService implements Resolve<any> {
    */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
     return new Promise((resolve, reject) => {
+      console.log('resolver called');
       Promise.all([this.getEvents(), this.getCalendar()]).then(res => {
         resolve(res);
       }, reject);
@@ -46,7 +52,13 @@ export class TempogrammeService implements Resolve<any> {
   /**
    * Get Events
    */
-  getEvents(): Promise<any[]> {
+  getEvents() {
+  /*  this.eventData.getAll().subscribe(data => {
+      this.events = data;
+      this.tempEvents = data;
+      this.onEventChange.next(this.events);
+    });*/
+
     const url = `api/calendar-events`;
 
     return new Promise((resolve, reject) => {
@@ -67,9 +79,10 @@ export class TempogrammeService implements Resolve<any> {
 
     return new Promise((resolve, reject) => {
       this._httpClient.get(url).subscribe((response: any) => {
-        this.calendar = response;
-        this.onCalendarChange.next(this.calendar);
-        resolve(this.calendar);
+        console.log('getCalendar', response);
+        this.categories = response;
+        this.onCalendarChange.next(this.categories);
+        resolve(this.categories);
       }, reject);
     });
   }
@@ -97,8 +110,7 @@ export class TempogrammeService implements Resolve<any> {
       calendarRef.push(res.filter);
     });
 
-    let filteredCalendar = this.tempEvents.filter(event => calendarRef.includes(event.calendar));
-    this.events = filteredCalendar;
+    this.events = this.tempEvents.filter(event => calendarRef.includes(event.calendar));
     this.onEventChange.next(this.events);
   }
 
@@ -123,7 +135,7 @@ export class TempogrammeService implements Resolve<any> {
    */
   addEvent(eventForm) {
     console.log('addEvent', eventForm);
-    const newEvent = new Tempogramme();
+    const newEvent = new Event();
     newEvent.url = eventForm.url;
     newEvent.title = eventForm.title;
     newEvent.start = eventForm.start;
@@ -144,7 +156,7 @@ export class TempogrammeService implements Resolve<any> {
    * @param eventRef
    */
   updateCurrentEvent(eventRef) {
-    const newEvent = new Tempogramme();
+    const newEvent = new Event();
     newEvent.allDay = eventRef.event.allDay;
     newEvent.id = parseInt(eventRef.event.id);
     newEvent.url = eventRef.event.url;

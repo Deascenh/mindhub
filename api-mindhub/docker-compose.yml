@@ -58,9 +58,9 @@ services:
   database:
     image: postgres:13-alpine
     environment:
-      - POSTGRES_DB=api
-      - POSTGRES_PASSWORD=!ChangeMe!
-      - POSTGRES_USER=api-platform
+      - POSTGRES_DB=mindhub
+      - POSTGRES_PASSWORD=M1ndHub!0
+      - POSTGRES_USER=api-mindhub
     volumes:
       - db_data:/var/lib/postgresql/data:rw
       # you may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!

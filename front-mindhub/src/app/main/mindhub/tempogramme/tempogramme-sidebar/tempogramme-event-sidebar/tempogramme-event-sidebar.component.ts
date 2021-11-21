@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 
 import { EventRef } from 'app/main/apps/calendar/calendar.model';
-import { TempogrammeService } from '../../tempogramme.service';
+import { TempogrammeService } from '../../services/tempogramme.service';
 import { French } from "flatpickr/dist/l10n/fr"
 
 @Component({

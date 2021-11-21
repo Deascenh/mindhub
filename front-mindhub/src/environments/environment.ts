@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   hmr: false,
-  apiUrl: 'http://localhost:4000'
+  apiUrl: 'http://localhost:4000',
+  mindhub_api_url: 'https://localhost:443',
 };
 
 /*

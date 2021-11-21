@@ -10,7 +10,7 @@ import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.s
 import { CoreConfigService } from '@core/services/config.service';
 
 import { EventRef } from 'app/main/apps/calendar/calendar.model';
-import { TempogrammeService } from './tempogramme.service';
+import { TempogrammeService } from './services/tempogramme.service';
 
 @Component({
   selector: 'app-tempogramme',

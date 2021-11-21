@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 
-import { TempogrammeService } from '../../tempogramme.service';
+import { TempogrammeService } from '../../services/tempogramme.service';
 
 @Component({
   selector: 'app-tempogramme-main-sidebar',

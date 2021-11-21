@@ -17,7 +17,7 @@ import { CoreSidebarModule } from '@core/components';
 import { TempogrammeComponent } from './tempogramme.component';
 import { TempogrammeEventSidebarComponent } from './tempogramme-sidebar/tempogramme-event-sidebar/tempogramme-event-sidebar.component';
 import { TempogrammeMainSidebarComponent } from './tempogramme-sidebar/tempogramme-main-sidebar/tempogramme-main-sidebar.component';
-import { TempogrammeService } from './tempogramme.service';
+import { TempogrammeService } from './services/tempogramme.service';
 
 FullCalendarModule.registerPlugins([dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]);
 
