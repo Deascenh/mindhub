@@ -63,7 +63,6 @@ class EventCategory
      * @var string
      *
      * @ORM\Column(type="string", length=125)
-     * @Assert\NotBlank()
      * @Groups({
      *     "event_category_get", "event_category_get_all", "event_category_post", "event_category_put",
      *     "event_get", "event_get_all",
@@ -75,7 +74,6 @@ class EventCategory
      * @var string
      *
      * @ORM\Column(type="string", length=125)
-     * @Assert\NotBlank()
      * @Groups({
      *     "event_category_get", "event_category_get_all", "event_category_post", "event_category_put",
      *     "event_get", "event_get_all",
@@ -88,9 +86,6 @@ class EventCategory
      *
      * @ApiSubresource(maxDepth=1)
      * @OneToMany(targetEntity="App\Entity\Event", mappedBy="category")
-     * @Groups({
-     *     "event_category_get", "event_category_get_all", "event_category_post", "event_category_put",
-     * })
      */
     private Collection $events;
 
@@ -156,7 +151,7 @@ class EventCategory
      */
     public function setColor(string $color)
     {
-        $this->name = $color;
+        $this->color = $color;
     }
 
     /**

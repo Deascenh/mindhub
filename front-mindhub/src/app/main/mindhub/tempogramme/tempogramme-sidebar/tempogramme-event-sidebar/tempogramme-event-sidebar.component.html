@@ -31,20 +31,20 @@
           </span>
         </div>
         <div class="form-group">
-          <label for="select-label" class="form-label">Dans l'ensemble :</label>
+          <label for="category" class="form-label">Dans l'ensemble :</label>
           <ng-select
-            [items]="selectLabel"
-            name="selectlabel"
-            [(ngModel)]="event.calendar"
-            bindLabel="label"
-            bindValue="label"
+            [items]="categoriesList"
+            name="category"
+            id="category"
+            [(ngModel)]="event.category"
+            bindLabel="name"
             required
             [class.error]="eventForm.submitted && formLabelRef.invalid"
             #formLabelRef="ngModel"
           >
             <ng-template ng-option-tmp ng-label-tmp let-item="item">
-              <span class="bullet bullet-sm mr-50 bullet-{{ item.bullet }}"></span>
-              {{ item.label }}
+              <span class="bullet bullet-sm mr-50 bullet-{{ item.color }}"></span>
+              {{ item.name }}
             </ng-template>
           </ng-select>
           <span *ngIf="eventForm.submitted && formLabelRef.invalid" class="invalid-form">
@@ -99,12 +99,12 @@
           />
         </div>
         <div class="form-group select2-primary">
-          <label for="event-people" class="form-label">Lier des personnes</label>
+          <label for="people" class="form-label">Lier des personnes</label>
           <ng-select
-            id="event-people"
-            [items]="selectGuest"
-            name="selectGuest"
-            [(ngModel)]="event.extendedProps.addGuest"
+            id="people"
+            [items]="peopleList"
+            name="people"
+            [(ngModel)]="event.people"
             bindLabel="name"
           >
             <ng-template ng-option-tmp ng-label-tmp let-item="item">
@@ -114,10 +114,10 @@
                   [src]="item.avatar"
                   height="26"
                   width="26"
-                  [alt]="item.name"
+                  [alt]="item.firstName + ' ' + item.lastName"
                 />
                 <div class="media-body">
-                  <p class="mb-0">{{ item.name }}</p>
+                  <p class="mb-0">{{ item.firstName + ' ' + item.lastName }}</p>
                 </div>
               </div>
             </ng-template>
@@ -130,7 +130,7 @@
             class="form-control"
             id="event-location"
             placeholder="Indiquer un lieu"
-            [(ngModel)]="event.extendedProps.location"
+            [(ngModel)]="event.location"
             name="location"
           />
         </div>
@@ -140,7 +140,7 @@
             name="event-description-editor"
             id="event-description-editor"
             class="form-control"
-            [(ngModel)]="event.extendedProps.description"
+            [(ngModel)]="event.description"
             name="description"
           ></textarea>
         </div>

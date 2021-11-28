@@ -108,7 +108,7 @@ class Event
      *     "event_get", "event_get_all", "event_post", "event_put",
      * })
      */
-    private \DateTime $start;
+    private \DateTime $startTime;
 
     /**
      * @var \DateTime
@@ -118,7 +118,7 @@ class Event
      *     "event_get", "event_get_all", "event_post", "event_put",
      * })
      */
-    private \DateTime $end;
+    private \DateTime $endTime;
 
     /**
      * @var bool
@@ -136,7 +136,7 @@ class Event
      * @ManyToOne(targetEntity="App\Entity\EventCategory", inversedBy="events")
      * @JoinColumn(referencedColumnName="id")
      * @Groups({
-     *     "event_get", "event_get_all",
+     *     "event_get", "event_get_all", "event_post", "event_put"
      * })
      */
     private EventCategory $category;
@@ -146,19 +146,22 @@ class Event
      *
      * @ORM\ManyToMany(targetEntity="App\Entity\Person", inversedBy="events")
      * @ORM\JoinTable(
-     *     name="events_concerned_persons",
+     *     name="events_concerned_people",
      *     joinColumns={@ORM\JoinColumn(name="event_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")}
      * )
+     * @Groups({
+     *     "event_get", "event_post", "event_put"
+     * })
      */
-    private Collection $concernedPersons;
+    private Collection $concernedPeople;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->concernedPersons = new ArrayCollection();
+        $this->concernedPeople = new ArrayCollection();
     }
 
     public function getId(): UuidInterface
@@ -221,15 +224,15 @@ class Event
         $this->category = $category;
     }
 
-    public function getConcernedPersons(): Collection
+    public function getConcernedPeople(): Collection
     {
-        return $this->concernedPersons;
+        return $this->concernedPeople;
     }
 
     public function addConcernedPerson(Person $person): self
     {
-        if (!$this->concernedPersons->contains($person)) {
-            $this->concernedPersons[] = $person;
+        if (!$this->concernedPeople->contains($person)) {
+            $this->concernedPeople[] = $person;
             $person->addEvent($this);
         }
 
@@ -238,8 +241,8 @@ class Event
 
     public function removeConcernedPerson(Person $person): self
     {
-        if ($this->concernedPersons->contains($person) && $person->getEvents()->contains($this)) {
-            $this->concernedPersons->removeElement($person);
+        if ($this->concernedPeople->contains($person) && $person->getEvents()->contains($this)) {
+            $this->concernedPeople->removeElement($person);
             $person->removeEvent($this);
         }
 
@@ -297,33 +300,33 @@ class Event
     /**
      * @return \DateTime
      */
-    public function getStart(): \DateTime
+    public function getStartTime(): \DateTime
     {
-        return $this->start;
+        return $this->startTime;
     }
 
     /**
-     * @param \DateTime $start
+     * @param \DateTime $startTime
      */
-    public function setStart(\DateTime $start): void
+    public function setStartTime(\DateTime $startTime): void
     {
-        $this->start = $start;
+        $this->startTime = $startTime;
     }
 
     /**
      * @return \DateTime
      */
-    public function getEnd(): \DateTime
+    public function getEndTime(): \DateTime
     {
-        return $this->end;
+        return $this->endTime;
     }
 
     /**
-     * @param \DateTime $end
+     * @param \DateTime $endTime
      */
-    public function setEnd(\DateTime $end): void
+    public function setEndTime(\DateTime $endTime): void
     {
-        $this->end = $end;
+        $this->endTime = $endTime;
     }
 
     /**

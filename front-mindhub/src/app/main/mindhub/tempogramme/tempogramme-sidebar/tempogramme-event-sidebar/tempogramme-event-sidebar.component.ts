@@ -2,9 +2,12 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 
-import { EventRef } from 'app/main/apps/calendar/calendar.model';
 import { TempogrammeService } from '../../services/tempogramme.service';
 import { French } from "flatpickr/dist/l10n/fr"
+import { Event, EventCategory } from '../../models';
+import { EventCategoryDataService } from '../../services/data/event-category-data.service';
+import { Person } from '../../../persona/models';
+import { PersonDataService } from '../../../persona/services/data/person-data.service';
 
 @Component({
   selector: 'app-tempogramme-event-sidebar',
@@ -17,23 +20,10 @@ export class TempogrammeEventSidebarComponent implements OnInit {
   @ViewChild('endDatePicker') endDatePicker;
 
   // Public
-  public event: EventRef;
+  public event: Event;
   public isDataEmpty;
-  public selectLabel = [
-    { label: 'Professionnel', bullet: 'danger' },
-    { label: 'Social', bullet: 'primary' },
-    { label: 'Personnel', bullet: 'success' },
-    { label: 'Famille', bullet: 'warning' },
-    { label: 'A faire', bullet: 'info' }
-  ];
-  public selectGuest = [
-    { name: 'Jane Foster', avatar: 'assets/images/avatars/1-small.png' },
-    { name: 'Donna Frank', avatar: 'assets/images/avatars/3-small.png' },
-    { name: 'Gabrielle Robertson', avatar: 'assets/images/avatars/5-small.png' },
-    { name: 'Lori Spears', avatar: 'assets/images/avatars/7-small.png' },
-    { name: 'Sandy Vega', avatar: 'assets/images/avatars/9-small.png' },
-    { name: 'Cheryl May', avatar: 'assets/images/avatars/11-small.png' }
-  ];
+  public categoriesList: EventCategory[] = [];
+  public peopleList: Person[] = [];
   public startDateOptions = {
     altInput: true,
     locale: French,
@@ -52,11 +42,16 @@ export class TempogrammeEventSidebarComponent implements OnInit {
   };
 
   /**
-   *
    * @param {CoreSidebarService} _coreSidebarService
    * @param {TempogrammeService} _tempogrammeService
+   * @param {EventCategoryDataService} eventCategoryData
+   * @param {PersonDataService} personData
    */
-  constructor(private _coreSidebarService: CoreSidebarService, private _tempogrammeService: TempogrammeService) {}
+  constructor(private _coreSidebarService: CoreSidebarService,
+              private _tempogrammeService: TempogrammeService,
+              private eventCategoryData: EventCategoryDataService,
+              private personData: PersonDataService,
+  ) { }
 
   // Public Methods
   // -----------------------------------------------------------------------------------------------------
@@ -74,6 +69,8 @@ export class TempogrammeEventSidebarComponent implements OnInit {
    * @param eventForm
    */
   addEvent(eventForm) {
+    console.log(eventForm);
+    console.log(eventForm.valid);
     if (eventForm.valid) {
       //! Fix: Temp fix till ng2-flatpicker support ng-modal (Getting NG0100: Expression has changed after it was checked error if we use ng-model with ng2-flatpicker)
       eventForm.form.value.start = this.startDatePicker.flatpickrElement.nativeElement.children[0].value;
@@ -92,6 +89,7 @@ export class TempogrammeEventSidebarComponent implements OnInit {
     //! Fix: Temp fix till ng2-flatpicker support ng-modal
     this.event.start = this.startDatePicker.flatpickrElement.nativeElement.children[0].value;
     this.event.end = this.endDatePicker.flatpickrElement.nativeElement.children[0].value;
+
     this._tempogrammeService.postUpdatedEvent(this.event);
   }
 
@@ -110,9 +108,11 @@ export class TempogrammeEventSidebarComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
+    this.eventCategoryData.getAll().subscribe(categories => this.categoriesList = categories['hydra:member']);
+    this.personData.getAll().subscribe(people => this.peopleList = people['hydra:member']);
     // Subscribe to current event changes
     this._tempogrammeService.onCurrentEventChange.subscribe(response => {
-      console.log(response)
+      console.log('onCurrentEventChange', response)
       this.event = response;
 
       // If Event is available
@@ -125,7 +125,7 @@ export class TempogrammeEventSidebarComponent implements OnInit {
       }
       // else Create New Event
       else {
-        this.event = new EventRef();
+        this.event = new Event();
 
         // Clear Flatpicker Values
         setTimeout(() => {

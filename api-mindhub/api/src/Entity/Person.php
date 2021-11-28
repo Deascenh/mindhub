@@ -95,7 +95,7 @@ class Person
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="concernedPersons")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="concernedPeople")
      */
     private Collection $events;
 
@@ -199,7 +199,7 @@ class Person
 
     public function removeEvent(Event $event): self
     {
-        if ($this->events->contains($event) && $event->getConcernedPersons()->contains($this)) {
+        if ($this->events->contains($event) && $event->getConcernedPeople()->contains($this)) {
             $this->events->removeElement($event);
             $event->removeConcernedPerson($this);
         }

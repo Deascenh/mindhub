@@ -11,7 +11,7 @@ import { TempogrammeService } from '../../services/tempogramme.service';
 })
 export class TempogrammeMainSidebarComponent implements OnInit {
   // Public
-  public calendarRef = [];
+  public categories = [];
   public tempRef = [];
   public checkAll = true;
 
@@ -47,7 +47,7 @@ export class TempogrammeMainSidebarComponent implements OnInit {
    * If all checkbox are checked : returns TRUE
    */
   allChecked() {
-    return this.calendarRef.every(v => v.checked === true);
+    return this.categories.every(v => v.checked === true);
   }
 
   /**
@@ -57,13 +57,13 @@ export class TempogrammeMainSidebarComponent implements OnInit {
    * @param id
    */
   checkboxChange(event, id) {
-    const index = this.calendarRef.findIndex(r => {
+    const index = this.categories.findIndex(r => {
       if (r.id === id) {
         return id;
       }
     });
-    this.calendarRef[index].checked = event.target.checked;
-    this._tempogrammeService.calendarUpdate(this.calendarRef);
+    this.categories[index].checked = event.target.checked;
+    this._tempogrammeService.calendarUpdate(this.categories);
     this.checkAll = this.allChecked();
   }
 
@@ -75,15 +75,15 @@ export class TempogrammeMainSidebarComponent implements OnInit {
   toggleCheckboxAll(event) {
     this.checkAll = event.target.checked;
     if (this.checkAll) {
-      this.calendarRef.map(res => {
+      this.categories.map(res => {
         res.checked = true;
       });
     } else {
-      this.calendarRef.map(res => {
+      this.categories.map(res => {
         res.checked = false;
       });
     }
-    this._tempogrammeService.calendarUpdate(this.calendarRef);
+    this._tempogrammeService.calendarUpdate(this.categories);
   }
 
   // Lifecycle Hooks
@@ -95,7 +95,8 @@ export class TempogrammeMainSidebarComponent implements OnInit {
   ngOnInit(): void {
     // Subscribe to Calendar changes
     this._tempogrammeService.onCalendarChange.subscribe(res => {
-      this.calendarRef = res;
+      console.log('Sidebar main ngOnInit', res);
+      this.categories = res;
     });
   }
 }

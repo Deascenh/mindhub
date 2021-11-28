@@ -34,8 +34,14 @@ export class EventDataService {
             return this.api.put(EventDataService.makePath(event.id), event)
                 .pipe(map(data => new Event(data)));
         } else {
-            return this.api.post(EventDataService.path, Event)
+            return this.api.post(EventDataService.path, event)
                 .pipe(map(data => new Event(data)));
+        }
+    }
+
+    delete(event: Event): Observable<any> {
+        if (event['@id']) {
+            return this.api.delete(EventDataService.makePath(event.id), event);
         }
     }
 

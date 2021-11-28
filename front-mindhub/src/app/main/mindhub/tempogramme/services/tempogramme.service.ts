@@ -5,6 +5,7 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Event, EventCategory } from '../models';
 import { EventDataService } from './data/event-data.service';
+import { EventCategoryDataService } from './data/event-category-data.service';
 
 @Injectable()
 export class TempogrammeService implements Resolve<any> {
@@ -22,11 +23,13 @@ export class TempogrammeService implements Resolve<any> {
    * Constructor
    *
    * @param {HttpClient} _httpClient
+   * @param {EventDataService} eventData
+   * @param {EventCategoryDataService} eventCategoryData
    */
   constructor(
     private _httpClient: HttpClient,
     private eventData: EventDataService,
-    private eventCategoryData: EventDataService,
+    private eventCategoryData: EventCategoryDataService,
   ) {
     this.onEventChange = new BehaviorSubject({});
     this.onCurrentEventChange = new BehaviorSubject({});
@@ -42,7 +45,6 @@ export class TempogrammeService implements Resolve<any> {
    */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
     return new Promise((resolve, reject) => {
-      console.log('resolver called');
       Promise.all([this.getEvents(), this.getCalendar()]).then(res => {
         resolve(res);
       }, reject);
@@ -53,18 +55,10 @@ export class TempogrammeService implements Resolve<any> {
    * Get Events
    */
   getEvents() {
-  /*  this.eventData.getAll().subscribe(data => {
-      this.events = data;
-      this.tempEvents = data;
-      this.onEventChange.next(this.events);
-    });*/
-
-    const url = `api/calendar-events`;
-
     return new Promise((resolve, reject) => {
-      this._httpClient.get(url).subscribe((response: any) => {
-        this.events = response;
-        this.tempEvents = response;
+      this.eventData.getAll().subscribe(data => {
+        this.events = data['hydra:member'];
+        this.tempEvents = data['hydra:member'];
         this.onEventChange.next(this.events);
         resolve(this.events);
       }, reject);
@@ -74,13 +68,10 @@ export class TempogrammeService implements Resolve<any> {
   /**
    * Get Calendar
    */
-  getCalendar(): Promise<any[]> {
-    const url = `api/calendar-filter`;
-
+  getCalendar() {
     return new Promise((resolve, reject) => {
-      this._httpClient.get(url).subscribe((response: any) => {
-        console.log('getCalendar', response);
-        this.categories = response;
+      this.eventCategoryData.getAll().subscribe(resp => {
+        this.categories = resp['hydra:member'];
         this.onCalendarChange.next(this.categories);
         resolve(this.categories);
       }, reject);
@@ -121,11 +112,11 @@ export class TempogrammeService implements Resolve<any> {
    */
   deleteEvent(event) {
     return new Promise((resolve, reject) => {
-      this._httpClient.delete('api/calendar-events/' + event.id).subscribe(response => {
+      this.eventData.delete(event).subscribe((resp) => {
         this.getEvents();
-        resolve(response);
-      }, reject);
-    });
+        resolve(resp);
+    }, reject);
+  });
   }
 
   /**
@@ -134,20 +125,17 @@ export class TempogrammeService implements Resolve<any> {
    * @param eventForm
    */
   addEvent(eventForm) {
-    console.log('addEvent', eventForm);
     const newEvent = new Event();
     newEvent.url = eventForm.url;
     newEvent.title = eventForm.title;
     newEvent.start = eventForm.start;
     newEvent.end = eventForm.end;
     newEvent.allDay = eventForm.allDay;
-    newEvent.calendar = eventForm.selectlabel;
-    newEvent.extendedProps.location = eventForm.location;
-    newEvent.extendedProps.description = eventForm.description;
-    newEvent.extendedProps.addGuest = eventForm.addGuest;
+    newEvent.category = eventForm.category['@id'];
+    newEvent.people = eventForm.people.map(p => p['@id']);
     this.currentEvent = newEvent;
     this.onCurrentEventChange.next(this.currentEvent);
-    this.postNewEvent();
+    this.eventData.save(newEvent).subscribe();
   }
 
   /**
@@ -158,30 +146,17 @@ export class TempogrammeService implements Resolve<any> {
   updateCurrentEvent(eventRef) {
     const newEvent = new Event();
     newEvent.allDay = eventRef.event.allDay;
-    newEvent.id = parseInt(eventRef.event.id);
+    newEvent.id = eventRef.event.id;
     newEvent.url = eventRef.event.url;
     newEvent.title = eventRef.event.title;
     newEvent.start = eventRef.event.start;
     newEvent.end = eventRef.event.end;
-    newEvent.calendar = eventRef.event.extendedProps.calendar;
-    newEvent.extendedProps.location = eventRef.event.extendedProps.location;
-    newEvent.extendedProps.description = eventRef.event.extendedProps.description;
-    newEvent.extendedProps.addGuest = eventRef.event.extendedProps.addGuest;
+    newEvent.category = eventRef.category['@id'];
+    newEvent.people = eventRef.people.map(p => p['@id']);
     this.currentEvent = newEvent;
     this.onCurrentEventChange.next(this.currentEvent);
   }
 
-  /**
-   * Post New Event
-   */
-  postNewEvent() {
-    return new Promise((resolve, reject) => {
-      this._httpClient.post('api/calendar-events/', this.currentEvent).subscribe(response => {
-        this.getEvents();
-        resolve(response);
-      }, reject);
-    });
-  }
 
   /**
    * Post Updated Event
@@ -189,10 +164,11 @@ export class TempogrammeService implements Resolve<any> {
    * @param event
    */
   postUpdatedEvent(event) {
+    console.log('Go post !');
     return new Promise((resolve, reject) => {
-      this._httpClient.post('api/calendar-events/' + event.id, { ...event }).subscribe(response => {
+      this.eventData.save(new Event(event)).subscribe(resp => {
         this.getEvents();
-        resolve(response);
+        resolve(resp);
       }, reject);
     });
   }

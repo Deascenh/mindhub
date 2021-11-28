@@ -21,17 +21,17 @@
     </div>
     <div class="calendar-events-filter">
       <div
-        class="custom-control  custom-checkbox mb-1 custom-control-{{ calendar.color }}"
-        *ngFor="let calendar of calendarRef"
+        class="custom-control  custom-checkbox mb-1 custom-control-{{ category.color }}"
+        *ngFor="let category of categories"
       >
         <input
           type="checkbox"
-          (change)="checkboxChange($event, calendar.id)"
+          (change)="checkboxChange($event, category.id)"
           class="custom-control-input input-filter"
-          id="calendar-{{ calendar.id }}"
-          [checked]="calendar.checked"
+          id="calendar-{{ category.id }}"
+          [checked]="category.checked"
         />
-        <label class="custom-control-label" for="calendar-{{ calendar.id }}">{{ calendar.filter }}</label>
+        <label class="custom-control-label" for="calendar-{{ category.id }}">{{ category.name }}</label>
       </div>
     </div>
   </div>

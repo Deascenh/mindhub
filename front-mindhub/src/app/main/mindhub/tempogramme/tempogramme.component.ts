@@ -125,11 +125,13 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Subscribe config change
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
+      console.log('config change', config);
       // ! If we have zoomIn route Transition then load calendar after 450ms(Transition will finish in 400ms)
       if (config.layout.animation === 'zoomIn') {
         setTimeout(() => {
           // Subscribe to Event Change
           this._tempogrammeService.onEventChange.subscribe(res => {
+            console.log('onEventChange after timeOut', res);
             this.events = res;
             this.calendarOptions.events = res;
           });
@@ -137,6 +139,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
       } else {
         // Subscribe to Event Change
         this._tempogrammeService.onEventChange.subscribe(res => {
+          console.log('onEventChange', res);
           this.events = res;
           this.calendarOptions.events = res;
         });
@@ -144,6 +147,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
     });
 
     this._tempogrammeService.onCurrentEventChange.subscribe(res => {
+      console.log('onCurrentEventChange', res);
       this.event = res;
     });
   }

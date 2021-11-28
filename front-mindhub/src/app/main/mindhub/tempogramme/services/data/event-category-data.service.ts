@@ -21,7 +21,7 @@ export class EventCategoryDataService {
     );
   }
 
-  getAll(parameters: ValidParamsObject): Observable<any> {
+  getAll(parameters: ValidParamsObject = {}): Observable<any> {
     const httpParams = prepareHttpParams(parameters);
 
     return this.api.get(EventCategoryDataService.path, httpParams).pipe(
