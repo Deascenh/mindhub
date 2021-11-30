@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 
@@ -22,12 +21,10 @@ export class TempogrammeService implements Resolve<any> {
   /**
    * Constructor
    *
-   * @param {HttpClient} _httpClient
    * @param {EventDataService} eventData
    * @param {EventCategoryDataService} eventCategoryData
    */
   constructor(
-    private _httpClient: HttpClient,
     private eventData: EventDataService,
     private eventCategoryData: EventCategoryDataService,
   ) {
@@ -96,12 +93,12 @@ export class TempogrammeService implements Resolve<any> {
       return calendar.checked === true;
     });
 
-    let calendarRef = [];
+    let choosenCategoriesIri = [];
     calendarsChecked.map(res => {
-      calendarRef.push(res.filter);
+      choosenCategoriesIri.push(res.f);
     });
 
-    this.events = this.tempEvents.filter(event => calendarRef.includes(event.calendar));
+    this.events = this.tempEvents.filter(event => choosenCategoriesIri.includes(event.category));
     this.onEventChange.next(this.events);
   }
 
@@ -128,14 +125,18 @@ export class TempogrammeService implements Resolve<any> {
     const newEvent = new Event();
     newEvent.url = eventForm.url;
     newEvent.title = eventForm.title;
-    newEvent.start = eventForm.start;
-    newEvent.end = eventForm.end;
+    newEvent.start = newEvent.startTime = eventForm.start;
+    newEvent.end = newEvent.endTime = eventForm.end;
     newEvent.allDay = eventForm.allDay;
     newEvent.category = eventForm.category['@id'];
-    newEvent.people = eventForm.people.map(p => p['@id']);
+
+    if (Array.isArray(eventForm.people)) {
+      newEvent.people = eventForm.people.map(p => p['@id']);
+    }
+
     this.currentEvent = newEvent;
     this.onCurrentEventChange.next(this.currentEvent);
-    this.eventData.save(newEvent).subscribe();
+    this.postNewEvent();
   }
 
   /**
@@ -151,12 +152,27 @@ export class TempogrammeService implements Resolve<any> {
     newEvent.title = eventRef.event.title;
     newEvent.start = eventRef.event.start;
     newEvent.end = eventRef.event.end;
-    newEvent.category = eventRef.category['@id'];
-    newEvent.people = eventRef.people.map(p => p['@id']);
+    newEvent.category = eventRef.event.extendedProps.category;
+
+    if (eventRef.event.people) {
+      newEvent.people = eventRef.event.people.map(p => p['@id']);
+    }
+
     this.currentEvent = newEvent;
     this.onCurrentEventChange.next(this.currentEvent);
   }
 
+  /**
+   * Post New Event
+   */
+  postNewEvent() {
+    return new Promise((resolve, reject) => {
+      this.eventData.save(this.currentEvent).subscribe(response => {
+        this.getEvents();
+        resolve(response);
+      }, reject);
+    });
+  }
 
   /**
    * Post Updated Event
@@ -164,7 +180,6 @@ export class TempogrammeService implements Resolve<any> {
    * @param event
    */
   postUpdatedEvent(event) {
-    console.log('Go post !');
     return new Promise((resolve, reject) => {
       this.eventData.save(new Event(event)).subscribe(resp => {
         this.getEvents();

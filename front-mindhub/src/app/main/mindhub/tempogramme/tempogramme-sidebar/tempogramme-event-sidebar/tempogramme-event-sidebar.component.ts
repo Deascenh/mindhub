@@ -60,7 +60,7 @@ export class TempogrammeEventSidebarComponent implements OnInit {
    * Toggle Event Sidebar
    */
   toggleEventSidebar() {
-    this._coreSidebarService.getSidebarRegistry('calendar-event-sidebar').toggleOpen();
+    this._coreSidebarService.getSidebarRegistry('tempogramme-event-sidebar').toggleOpen();
   }
 
   /**
@@ -69,8 +69,6 @@ export class TempogrammeEventSidebarComponent implements OnInit {
    * @param eventForm
    */
   addEvent(eventForm) {
-    console.log(eventForm);
-    console.log(eventForm.valid);
     if (eventForm.valid) {
       //! Fix: Temp fix till ng2-flatpicker support ng-modal (Getting NG0100: Expression has changed after it was checked error if we use ng-model with ng2-flatpicker)
       eventForm.form.value.start = this.startDatePicker.flatpickrElement.nativeElement.children[0].value;
@@ -89,6 +87,7 @@ export class TempogrammeEventSidebarComponent implements OnInit {
     //! Fix: Temp fix till ng2-flatpicker support ng-modal
     this.event.start = this.startDatePicker.flatpickrElement.nativeElement.children[0].value;
     this.event.end = this.endDatePicker.flatpickrElement.nativeElement.children[0].value;
+    this.event.category = this.event.category['@id'];
 
     this._tempogrammeService.postUpdatedEvent(this.event);
   }
@@ -112,7 +111,6 @@ export class TempogrammeEventSidebarComponent implements OnInit {
     this.personData.getAll().subscribe(people => this.peopleList = people['hydra:member']);
     // Subscribe to current event changes
     this._tempogrammeService.onCurrentEventChange.subscribe(response => {
-      console.log('onCurrentEventChange', response)
       this.event = response;
 
       // If Event is available

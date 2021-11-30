@@ -13,7 +13,6 @@ use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity

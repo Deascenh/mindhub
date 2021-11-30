@@ -4,13 +4,13 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CalendarOptions, EventClickArg } from '@fullcalendar/angular';
 import frLocale from '@fullcalendar/core/locales/fr';
-import enLocale from '@fullcalendar/core/locales/en-gb';
 
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 
 import { EventRef } from 'app/main/apps/calendar/calendar.model';
 import { TempogrammeService } from './services/tempogramme.service';
+import { EventCategory } from './models';
 
 @Component({
   selector: 'app-tempogramme',
@@ -25,7 +25,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
   public event;
 
   public calendarOptions: CalendarOptions = {
-    locales: [frLocale, enLocale],
+    locales: [frLocale],
     locale: 'fr',
     firstDay: 1,
     headerToolbar: {
@@ -48,6 +48,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
 
   // Private
   private _unsubscribeAll: Subject<any>;
+  private categories: EventCategory[] = [];
 
   /**
    * Constructor
@@ -59,7 +60,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
   constructor(
     private _coreSidebarService: CoreSidebarService,
     private _tempogrammeService: TempogrammeService,
-    private _coreConfigService: CoreConfigService
+    private _coreConfigService: CoreConfigService,
   ) {
     this._unsubscribeAll = new Subject();
   }
@@ -73,16 +74,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
    * @param s
    */
   eventClass(s) {
-    const calendarsColor = {
-      Professionnel: 'danger',
-      Social: 'primary',
-      Personnel: 'success',
-      Famille: 'warning',
-      'A faire': 'info'
-    };
-
-    const colorName = calendarsColor[s.event._def.extendedProps.calendar];
-    return `bg-light-${colorName}`;
+    return `bg-light-${s.event._def.extendedProps.category.color}`;
   }
 
   /**
@@ -91,7 +83,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
    * @param eventRef
    */
   handleUpdateEventClick(eventRef: EventClickArg) {
-    this._coreSidebarService.getSidebarRegistry('calendar-event-sidebar').toggleOpen();
+    this._coreSidebarService.getSidebarRegistry('tempogramme-event-sidebar').toggleOpen();
     this._tempogrammeService.updateCurrentEvent(eventRef);
   }
 
@@ -112,7 +104,7 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
   handleDateSelect(eventRef) {
     const newEvent = new EventRef();
     newEvent.start = eventRef.start;
-    this._coreSidebarService.getSidebarRegistry('calendar-event-sidebar').toggleOpen();
+    this._coreSidebarService.getSidebarRegistry('tempogramme-event-sidebar').toggleOpen();
     this._tempogrammeService.onCurrentEventChange.next(newEvent);
   }
 
@@ -125,13 +117,11 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Subscribe config change
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
-      console.log('config change', config);
       // ! If we have zoomIn route Transition then load calendar after 450ms(Transition will finish in 400ms)
       if (config.layout.animation === 'zoomIn') {
         setTimeout(() => {
           // Subscribe to Event Change
           this._tempogrammeService.onEventChange.subscribe(res => {
-            console.log('onEventChange after timeOut', res);
             this.events = res;
             this.calendarOptions.events = res;
           });
@@ -139,7 +129,6 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
       } else {
         // Subscribe to Event Change
         this._tempogrammeService.onEventChange.subscribe(res => {
-          console.log('onEventChange', res);
           this.events = res;
           this.calendarOptions.events = res;
         });
@@ -147,7 +136,6 @@ export class TempogrammeComponent implements OnInit, AfterViewInit {
     });
 
     this._tempogrammeService.onCurrentEventChange.subscribe(res => {
-      console.log('onCurrentEventChange', res);
       this.event = res;
     });
   }

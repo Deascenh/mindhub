@@ -30,7 +30,7 @@ export class TempogrammeMainSidebarComponent implements OnInit {
    * Toggle Event Sidebar
    */
   toggleEventSidebar() {
-    this._coreSidebarService.getSidebarRegistry('calendar-event-sidebar').toggleOpen();
+    this._coreSidebarService.getSidebarRegistry('tempogramme-event-sidebar').toggleOpen();
   }
 
   /**
@@ -95,7 +95,6 @@ export class TempogrammeMainSidebarComponent implements OnInit {
   ngOnInit(): void {
     // Subscribe to Calendar changes
     this._tempogrammeService.onCalendarChange.subscribe(res => {
-      console.log('Sidebar main ngOnInit', res);
       this.categories = res;
     });
   }
