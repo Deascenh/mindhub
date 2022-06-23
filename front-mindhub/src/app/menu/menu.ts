@@ -27,6 +27,13 @@ export const menu: CoreMenu[] = [
         type: 'item',
         icon: 'circle',
         url: 'mindhub/procupo'
+      },
+      {
+        id: 'inposs',
+        title: 'Inposs',
+        type: 'item',
+        icon: 'circle',
+        url: 'mindhub/inposs'
       }
     ]
   },

@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { TranslateModule } from '@ngx-translate/core';
-
 import { CoreCommonModule } from '@core/common.module';
 import { CoreMenuComponent } from '@core/components/core-menu/core-menu.component';
 
@@ -18,7 +16,7 @@ CoreMenuVerticalItemComponent;
 CoreMenuVerticalCollapsibleComponent;
 
 @NgModule({
-  imports: [CommonModule, RouterModule, TranslateModule.forChild(), CoreCommonModule],
+  imports: [CommonModule, RouterModule, CoreCommonModule],
   exports: [CoreMenuComponent],
   declarations: [
     CoreMenuComponent,

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { catchError, map } from 'rxjs/operators';
@@ -57,10 +56,7 @@ export class ApiService {
     }),
   };
 
-  constructor(
-    private http: HttpClient,
-    private translate: TranslateService,
-  ) { }
+  constructor(private http: HttpClient) { }
 
   private static makePath(path: string): string {
     return environment.mindhub_api_url + '/' + path;
@@ -69,7 +65,6 @@ export class ApiService {
   get(path: string, params: HttpParams = new HttpParams()): Observable<any> {
     const httpOptions = Object.assign({}, this.httpOptions);
     httpOptions.params = params;
-    httpOptions.headers = (httpOptions.headers as HttpHeaders).set("Accept-Language", this.translate.store.currentLang)
 
     return this.http.get(
       ApiService.makePath(path),

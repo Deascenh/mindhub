@@ -2,12 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { FullCalendarModule } from '@fullcalendar/angular';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list';
-import timeGridPlugin from '@fullcalendar/timegrid';
-
 // routing
 const routes: Routes = [
   {
@@ -18,9 +12,12 @@ const routes: Routes = [
     path: 'tempogramme',
     loadChildren: () => import('./tempogramme/tempogramme.module').then(m => m.TempogrammeModule)
   },
+  {
+    path: 'inposs',
+    loadChildren: () => import('./inposs/inposs.module').then(m => m.InpossModule)
+  },
 ];
 
-FullCalendarModule.registerPlugins([dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]);
 
 @NgModule({
   declarations: [],

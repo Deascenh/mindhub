@@ -4,20 +4,14 @@ import { Title } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 import * as Waves from 'node-waves';
 
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreLoadingScreenService } from '@core/services/loading-screen.service';
-import { CoreTranslationService } from '@core/services/translation.service';
 
 import { menu } from 'app/menu/menu';
-import { locale as menuEnglish } from 'app/menu/i18n/en';
-import { locale as menuFrench } from 'app/menu/i18n/fr';
-import { locale as menuGerman } from 'app/menu/i18n/de';
-import { locale as menuPortuguese } from 'app/menu/i18n/pt';
 
 @Component({
   selector: 'app-root',
@@ -27,8 +21,6 @@ import { locale as menuPortuguese } from 'app/menu/i18n/pt';
 export class AppComponent implements OnInit, OnDestroy {
   coreConfig: any;
   menu: any;
-  defaultLanguage: 'en'; // This language will be used as a fallback when a translation isn't found in the current language
-  appLanguage: 'en'; // Set application default language i.e fr
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -44,8 +36,6 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param {CoreSidebarService} _coreSidebarService
    * @param {CoreLoadingScreenService} _coreLoadingScreenService
    * @param {CoreMenuService} _coreMenuService
-   * @param {CoreTranslationService} _coreTranslationService
-   * @param {TranslateService} _translateService
    */
   constructor(
     @Inject(DOCUMENT) private document: any,
@@ -56,8 +46,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private _coreSidebarService: CoreSidebarService,
     private _coreLoadingScreenService: CoreLoadingScreenService,
     private _coreMenuService: CoreMenuService,
-    private _coreTranslationService: CoreTranslationService,
-    private _translateService: TranslateService
   ) {
     // Get the application main menu
     this.menu = menu;
@@ -67,15 +55,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Set the main menu as our current menu
     this._coreMenuService.setCurrentMenu('main');
-
-    // Add languages to the translation service
-    this._translateService.addLangs(['en', 'fr', 'de', 'pt']);
-
-    // This language will be used as a fallback when a translation isn't found in the current language
-    this._translateService.setDefaultLang('en');
-
-    // Set the translations for the menu
-    this._coreTranslationService.translate(menuEnglish, menuFrench, menuGerman, menuPortuguese);
 
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -94,46 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
-
-      // Set application default language.
-
-      // Change application language? Read the ngxTranslate Fix
-
-      // ? Use app-config.ts file to set default language
-      const appLanguage = this.coreConfig.app.appLanguage || 'en';
-      this._translateService.use(appLanguage);
-
-      // ? OR
-      // ? User the current browser lang if available, if undefined use 'en'
-      // const browserLang = this._translateService.getBrowserLang();
-      // this._translateService.use(browserLang.match(/en|fr|de|pt/) ? browserLang : 'en');
-
-      /**
-       * ! Fix : ngxTranslate
-       * ----------------------------------------------------------------------------------------------------
-       */
-
-      /**
-       *
-       * Using different language than the default ('en') one i.e French?
-       * In this case, you may find the issue where application is not properly translated when your app is initialized.
-       *
-       * It's due to ngxTranslate module and below is a fix for that.
-       * Eventually we will move to the multi language implementation over to the Angular's core language service.
-       *
-       **/
-
-      // Set the default language to 'en' and then back to 'fr'.
-
-      setTimeout(() => {
-        this._translateService.setDefaultLang('en');
-        this._translateService.setDefaultLang(appLanguage);
-      });
-
-      /**
-       * !Fix: ngxTranslate
-       * ----------------------------------------------------------------------------------------------------
-       */
 
       // Layout
       //--------
