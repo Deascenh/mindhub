@@ -15,7 +15,11 @@ interface notification {
 })
 export class NavbarNotificationComponent implements OnInit {
   // Public
-  public notifications: notification;
+  public notifications: notification = {
+    messages: [],
+    systemMessages: [],
+    system: true,
+  };
 
   /**
    *
@@ -30,8 +34,8 @@ export class NavbarNotificationComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this._notificationsService.onApiDataChange.subscribe(res => {
+/*    this._notificationsService.onApiDataChange.subscribe(res => {
       this.notifications = res;
-    });
+    });*/
   }
 }

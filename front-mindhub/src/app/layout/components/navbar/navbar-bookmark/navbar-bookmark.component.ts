@@ -182,7 +182,7 @@ export class NavbarBookmarkComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this._searchService.onApiDataChange.subscribe(res => {
+/*    this._searchService.onApiDataChange.subscribe(res => {
       this.apiData = res;
       this.pages = this.apiData[0].data;
       this.bookmarkedItems = this.pages.filter(page => page.isBookmarked === true);
@@ -190,6 +190,6 @@ export class NavbarBookmarkComponent implements OnInit {
     });
     this._searchService.onIsBookmarkOpenChange.subscribe(res => {
       this.openBookmarkRef = res;
-    });
+    });*/
   }
 }
