@@ -74,7 +74,7 @@ class Stuff
      *     "stuff_get", "stuff_get_all", "stuff_post", "stuff_put",
      * })
      */
-    private ?float $price;
+    private ?float $price = null;
 
     /**
      * @var float|null
@@ -84,7 +84,7 @@ class Stuff
      *     "stuff_get", "stuff_get_all", "stuff_post", "stuff_put",
      * })
      */
-    private ?float $estimatedPrice;
+    private ?float $estimatedPrice = null;
 
     /**
      * @var \DateTime|null
@@ -94,7 +94,7 @@ class Stuff
      *     "stuff_get", "stuff_get_all", "stuff_post", "stuff_put",
      * })
      */
-    private ?\DateTime $priceEstimatedAt;
+    private ?\DateTime $priceEstimatedAt = null;
 
     /**
      * @var \DateTime
@@ -132,9 +132,20 @@ class Stuff
      */
     private Collection $types;
 
+    /**
+     * @ApiSubresource(maxDepth=1)
+     * @ORM\OneToMany(targetEntity="App\Entity\StuffIllustration", mappedBy="stuff")
+     * @ORM\JoinColumn(referencedColumnName="id")
+     * @Groups({
+     *     "stuff_get", "stuff_get_all", "stuff_post", "stuff_put",
+     * })
+     */
+    private Collection $illustrations;
+
     public function __construct()
     {
         $this->types = new ArrayCollection();
+        $this->illustrations = new ArrayCollection();
     }
 
     /**
@@ -284,6 +295,33 @@ class Stuff
         if ($this->types->contains($type) && $type->getStuff()->contains($this)) {
             $this->types->removeElement($type);
             $type->removeStuff($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getIllustrations(): Collection
+    {
+        return $this->illustrations;
+    }
+
+    public function addIllustration(StuffIllustration $illustration): self
+    {
+        if (!$this->illustrations->contains($illustration)) {
+            $this->illustrations[] = $illustration;
+            $illustration->setStuff($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIllustration(StuffIllustration $illustration): self
+    {
+        if ($illustration->getStuff() === $this) {
+            $this->illustrations->removeElement($illustration);
         }
 
         return $this;

@@ -44,6 +44,10 @@ final class StuffDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
+        foreach ($data->getIllustrations() as $illustration) {
+            $this->decorated->remove($illustration, $context);
+        }
+
         return $this->decorated->remove($data, $context);
     }
 
