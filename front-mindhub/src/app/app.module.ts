@@ -30,6 +30,10 @@ const appRoutes: Routes = [
     loadChildren: () => import('./main/mindhub/mindhub.module').then(m => m.MindhubModule)
   },
   {
+    path: 'pages',
+    loadChildren: () => import('./main/pages/pages.module').then(m => m.PagesModule)
+  },
+  {
     path: '',
     redirectTo: '/mindhub',
     pathMatch: 'full'
