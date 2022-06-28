@@ -12,7 +12,14 @@
 
 $search-bar-height: 48px;
 
+// CUSTOM
+.feather-btn-lg {
+  vertical-align: inherit !important;
+}
+// \CUSTOM
+
 .ecommerce-application {
+
   .content-body {
     position: relative;
   }

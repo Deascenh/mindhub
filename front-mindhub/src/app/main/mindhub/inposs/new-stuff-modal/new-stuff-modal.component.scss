@@ -1,1 +1,13 @@
+@import '@core/scss/base/pages/app-ecommerce.scss';
+@import '@core/scss/angular/libs/swiper.component.scss';
 
+.webcam-container {
+  display: flex;
+  margin: auto;
+  overflow: hidden;
+  border: 2px solid $primary;
+  border-radius: 0.5rem;
+  aspect-ratio: 640 / 480;
+  max-width: 640px;
+  max-height: 480px;
+}

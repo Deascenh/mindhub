@@ -1,16 +1,60 @@
 <div class="modal-header">
-  <h5 class="modal-title" id="myModalLabel160">Small Modal</h5>
+  <h5 class="modal-title" id="myModalLabel160">Créer un nouveau Truc</h5>
   <button type="button" class="close" (click)="dismiss()" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body" tabindex="0" ngbAutofocus>
-  Tart lemon drops macaroon oat cake chocolate toffee chocolate bar icing. Pudding jelly beans
-  carrot cake pastry gummies cheesecake lollipop. I love cookie lollipop cake I love sweet
-  gummi
-  bears cupcake dessert.
+  <div class="row">
+
+    <div class="col-12 mb-2">
+      <!-- Start Camera-->
+      <webcam class="webcam-container mb-2"
+              *ngIf="cameraOn"
+              [trigger]="cameraTrigger"
+              (imageCapture)="handleCapture($event)"
+              (initError)="handleInitError($event)">
+      </webcam>
+
+      <div class="flex text-center">
+        <button
+          type="button"
+          class="btn btn-lg"
+          [class]="cameraOn ? 'btn-success mr-2' : 'btn-primary'"
+          (click)="cameraOn ? triggerSnapshot() : toggleCamera()"
+          rippleEffect>
+          <span class="mr-25 feather-btn-lg" [data-feather]="'camera'"></span>
+          {{ cameraOn ? 'Capture' : 'Camera' }}
+        </button>
+        <button *ngIf="cameraOn"
+                type="button"
+                class="btn btn-lg btn-icon btn-outline-danger"
+                (click)="toggleCamera()"
+                rippleEffect>
+          <span [data-feather]="'camera-off'"></span>
+        </button>
+      </div>
+      <!-- \ End Camera -->
+    </div>
+
+    <div *ngIf="snapshots.length > 0" class="col-12 mb-2">
+      <!-- Start Swiper-->
+      <div class="swiper-responsive-breakpoints swiper-container" [swiper]="illustrationsOptions">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let snapshot of snapshots; let index = index">
+            <img class="img-fluid" [src]="snapshot.imageAsDataUrl" [alt]="'snapshot-' + index">
+          </div>
+        </div>
+
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+      </div>
+      <!-- \ End Swiper-->
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary"
-          (click)="submit()">Accept</button>
+          (click)="submit()">Sauvegarder</button>
 </div>
