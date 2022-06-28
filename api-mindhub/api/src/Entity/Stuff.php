@@ -104,7 +104,7 @@ class Stuff
      *     "stuff_get", "stuff_get_all", "stuff_post", "stuff_put",
      * })
      */
-    private \DateTime $obtainedAd;
+    private \DateTime $obtainedAt;
 
     /**
      * @var string
@@ -243,17 +243,17 @@ class Stuff
     /**
      * @return \DateTime|null
      */
-    public function getObtainedAd(): ?\DateTime
+    public function getObtainedAt(): ?\DateTime
     {
-        return $this->obtainedAd ?? null;
+        return $this->obtainedAt ?? null;
     }
 
     /**
-     * @param \DateTime $obtainedAd
+     * @param \DateTime $obtainedAt
      */
-    public function setObtainedAd(\DateTime $obtainedAd): void
+    public function setObtainedAt(\DateTime $obtainedAt): void
     {
-        $this->obtainedAd = $obtainedAd;
+        $this->obtainedAt = $obtainedAt;
     }
 
     /**

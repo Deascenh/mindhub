@@ -29,7 +29,7 @@ final class StuffDataPersister implements ContextAwareDataPersisterInterface
         $operation = strtoupper($context['collection_operation_name'] ?? $context['item_operation_name']) ?? null;
 
         if ($operation === Request::METHOD_POST) {
-            $data->setObtainedAd($data->getObtainedAd() ?? new \DateTime());
+            $data->setObtainedAt($data->getObtainedAt() ?? new \DateTime());
 
             $data->setPriceEstimatedAt(
                 $data->getPriceEstimatedAt() ?? (null !== $data->getEstimatedPrice() ? new \DateTime() : null)
