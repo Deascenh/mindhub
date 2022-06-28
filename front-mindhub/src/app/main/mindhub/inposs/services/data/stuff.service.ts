@@ -29,9 +29,9 @@ export class StuffService {
         );
     }
 
-    save(Stuff: Partial<Stuff>): Observable<Stuff> {
-        if (Stuff.id) {
-            return this.api.put(StuffService.makePath(Stuff.id), Stuff)
+    save(stuff: Partial<Stuff>): Observable<Stuff> {
+        if (stuff.id) {
+            return this.api.put(StuffService.makePath(stuff.id), stuff)
                 .pipe(map(data => new Stuff(data)));
         } else {
             return this.api.post(StuffService.path, Stuff)
@@ -39,14 +39,14 @@ export class StuffService {
         }
     }
 
-    delete(Stuff: Stuff): Observable<any> {
-        if (Stuff['@id']) {
-            return this.api.delete(StuffService.makePath(Stuff.id), Stuff);
+    delete(stuff: Stuff): Observable<any> {
+        if (stuff['@id']) {
+            return this.api.delete(StuffService.makePath(stuff.id), stuff);
         }
     }
 
     public static deserializeHydraMember(data: any): Stuff[] {
-        data['hydra:member'] = data['hydra:member'].map(Stuff => new Stuff(Stuff));
+        data['hydra:member'] = data['hydra:member'].map(stuff => new Stuff(stuff));
         return data;
     }
 }

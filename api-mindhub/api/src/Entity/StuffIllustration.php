@@ -70,14 +70,20 @@ class StuffIllustration
 
     /**
      * @ApiProperty
-     * @Groups({ "stuff_illustration_get" })
+     * @Groups({
+     *     "stuff_illustration_get",
+     *     "stuff_get_all",
+     * })
      */
     public ?string $contentUrl = null;
 
     /**
      * @Vich\UploadableField(mapping="stuff_illustration", fileNameProperty="filePath")
      * @Assert\NotNull
-     * @Groups({ "stuff_illustration_get", "stuff_illustration_post" })
+     * @Groups({
+     *     "stuff_illustration_get", "stuff_illustration_post",
+     *     "stuff_get_all",
+     * })
     */
     public ?File $file = null;
 
@@ -90,7 +96,10 @@ class StuffIllustration
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @Groups({ "stuff_illustration_get", "stuff_illustration_post" })
+     * @Groups({
+     *     "stuff_illustration_get", "stuff_illustration_post",
+     *     "stuff_get_all",
+     * })
      */
     private bool $main = false;
 

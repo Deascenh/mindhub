@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 
@@ -33,13 +32,9 @@ export class InpossService implements Resolve<any> {
   };
 
   /**
-   * Constructor
-   *
-   * @param {HttpClient} _httpClient
    * @param stuffService
    */
   constructor(
-    private _httpClient: HttpClient,
     private stuffService: StuffService
   ) {
     this.onStuffListChange = new BehaviorSubject({});
@@ -69,7 +64,7 @@ export class InpossService implements Resolve<any> {
   getStuffs(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.stuffService.getAll().subscribe((response: any) => {
-        this.stuffList = response;
+        this.stuffList = response['hydra:member'];
         this.sortStuff('featured'); // Default shorting
         resolve(this.stuffList);
       }, reject);
@@ -81,11 +76,16 @@ export class InpossService implements Resolve<any> {
    */
   getSelectedStuff(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.stuffService.get(this.idHandel).subscribe((response: any) => {
-        this.selectedStuff = response;
-        this.onSelectedStuffChange.next(this.selectedStuff);
-        resolve(this.selectedStuff);
-      }, reject);
+      if (!!this.idHandel) {
+        console.log(this.idHandel);
+        this.stuffService.get(this.idHandel).subscribe((response: any) => {
+          this.selectedStuff = response;
+          this.onSelectedStuffChange.next(this.selectedStuff);
+          resolve(this.selectedStuff);
+        }, reject);
+      } else {
+        resolve(null);
+      }
     });
   }
 
