@@ -12,6 +12,7 @@ import { CoreConfigService } from '@core/services/config.service';
 import { CoreLoadingScreenService } from '@core/services/loading-screen.service';
 
 import { menu } from 'app/menu/menu';
+import { AuthenticationService } from './auth/service';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param {CoreSidebarService} _coreSidebarService
    * @param {CoreLoadingScreenService} _coreLoadingScreenService
    * @param {CoreMenuService} _coreMenuService
+   * @param _authService
    */
   constructor(
     @Inject(DOCUMENT) private document: any,
@@ -46,7 +48,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private _coreSidebarService: CoreSidebarService,
     private _coreLoadingScreenService: CoreLoadingScreenService,
     private _coreMenuService: CoreMenuService,
+    private _authService: AuthenticationService,
   ) {
+    this._authService.login('admin@demo.com', 'admin').subscribe();
     // Get the application main menu
     this.menu = menu;
 

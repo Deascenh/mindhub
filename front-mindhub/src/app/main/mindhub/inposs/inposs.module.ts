@@ -16,6 +16,8 @@ import { InpossService } from './services/inposs.service';
 import { ContentHeaderModule } from '../../../layout/components/content-header/content-header.module';
 import { NewStuffModalComponent } from './new-stuff-modal/new-stuff-modal.component';
 import { WebcamModule } from 'ngx-webcam';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -55,6 +57,8 @@ const routes: Routes = [
     NouisliderModule,
     NgbModalModule,
     WebcamModule,
+    NgSelectModule,
+    Ng2FlatpickrModule,
   ],
   providers: [
     {

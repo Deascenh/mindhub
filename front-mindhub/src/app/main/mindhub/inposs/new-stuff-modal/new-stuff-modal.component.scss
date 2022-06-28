@@ -1,5 +1,6 @@
 @import '@core/scss/base/pages/app-ecommerce.scss';
 @import '@core/scss/angular/libs/swiper.component.scss';
+@import '@core/scss/angular/libs/select.component.scss';
 
 .webcam-container {
   display: flex;
@@ -10,4 +11,15 @@
   aspect-ratio: 640 / 480;
   max-width: 640px;
   max-height: 480px;
+}
+
+.snapshot-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.33rem 0.5rem;
+}
+
+.rounded {
+  overflow: hidden;
 }
