@@ -6,17 +6,9 @@
 </div>
 <div class="modal-body" tabindex="0" ngbAutofocus>
   <div class="row">
-
     <div class="col-12 mb-2">
       <!-- Start Camera-->
-      <webcam class="webcam-container mb-2"
-              *ngIf="cameraOn"
-              [trigger]="cameraTrigger"
-              (imageCapture)="handleCapture($event)"
-              (initError)="handleInitError($event)">
-      </webcam>
-
-      <div class="flex text-center">
+      <div class="flex text-center mb-2">
         <button type="button"
                 class="btn btn-lg"
                 [class]="cameraOn ? 'btn-success mr-2' : 'btn-primary'"
@@ -33,6 +25,12 @@
           <span [data-feather]="'camera-off'"></span>
         </button>
       </div>
+      <webcam class="webcam-container"
+              *ngIf="cameraOn"
+              [trigger]="cameraTrigger"
+              (imageCapture)="handleCapture($event)"
+              (initError)="handleInitError($event)">
+      </webcam>
       <!-- \ End Camera -->
     </div>
 
@@ -65,7 +63,7 @@
       <form [formGroup]="StuffIllustrationForm" (ngSubmit)="submit()">
         <h6 class="mb-2">1. Types</h6>
         <div class="row">
-          <div class="col-12">
+          <div class="col-12 mb-2">
               <label>Ce qui caractérise le truc</label>
               <ng-select [items]="typesFound"
                          [typeahead]="searchTypes"
@@ -92,6 +90,20 @@
                      [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.name.errors }"/>
               <div *ngIf="SIFormSubmitted && SIForm.name.errors" class="invalid-feedback">
                 <div *ngIf="SIForm.name.errors.required">Ce nom est requis !</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group">
+              <label for="obtainingMethod">Méthode d'obtention</label>
+              <ng-select [items]="obtainingMethods"
+                         id="obtainingMethod"
+                         bindValue="value"
+                         bindLabel="label"
+                         formControlName="obtainingMethod"
+                         [class.error]="SIFormSubmitted && SIForm.obtainingMethod.errors"></ng-select>
+              <div *ngIf="SIFormSubmitted && SIForm.obtainingMethod.errors" class="invalid-feedback">
+                <div *ngIf="SIForm.obtainingMethod.errors.required">Il faut indiquer par quel moyen le truc à été obtenu !</div>
               </div>
             </div>
           </div>
@@ -129,20 +141,6 @@
                 <div *ngIf="SIForm.priceEstimatedAt.errors.required">
                   La date de la dernière estimation est requise !
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12">
-            <div class="form-group">
-              <label for="obtainingMethod">Méthode d'obtention</label>
-              <ng-select [items]="obtainingMethods"
-                         id="obtainingMethod"
-                         bindValue="value"
-                         bindLabel="label"
-                         formControlName="obtainingMethod"
-                         [class.error]="SIFormSubmitted && SIForm.obtainingMethod.errors"></ng-select>
-              <div *ngIf="SIFormSubmitted && SIForm.obtainingMethod.errors" class="invalid-feedback">
-                <div *ngIf="SIForm.obtainingMethod.errors.required">Il faut indiquer par quel moyen le truc à été obtenu !</div>
               </div>
             </div>
           </div>
