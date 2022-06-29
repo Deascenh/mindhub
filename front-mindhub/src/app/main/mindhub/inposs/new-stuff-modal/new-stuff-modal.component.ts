@@ -119,34 +119,34 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
   submit() {
     this.SIFormSubmitted = true;
 
-    console.log('snapshots', this.snapshots);
-
-    if (this.StuffIllustrationForm.valid) {
-      console.log('valid', this.StuffIllustrationForm.value);
-
-      this.handleTypesToLink().subscribe(newTypes => {
-        const stuffValues = this.StuffIllustrationForm.value;
-        const handleStuff = new Stuff({
-          ...stuffValues,
-          types: newTypes.map(type => type['@id']),
-          price: typeof stuffValues.price === 'number' ? stuffValues.price.toFixed(2) : undefined,
-          estimatedPrice: typeof stuffValues.estimatedPrice === 'number' ? stuffValues.estimatedPrice.toFixed(2) : undefined,
-          priceEstimatedAt: stuffValues.priceEstimatedAt[0] instanceof Date ? stuffValues.priceEstimatedAt[0].toISOString() : undefined,
-          obtainedAt: stuffValues.obtainedAt[0] instanceof Date ? stuffValues.obtainedAt[0].toISOString() : undefined,
-        });
-
-        this.stuffService.save(handleStuff).subscribe(stuff => {
-          this.stuff = stuff;
-          this.handleIllustrationsToLink().subscribe(illustrations => {
-            console.log('saved illustrations', illustrations);
-            this.illustrations = illustrations;
-          });
-        });
-      });
-    } else {
-      console.log('invalid', this.StuffIllustrationForm.value);
-      console.log('invalid', this.StuffIllustrationForm.errors);
+    if (this.StuffIllustrationForm.invalid) {
+      return;
     }
+
+    this.handleTypesToLink().subscribe(newTypes => {
+      const stuffValues = this.StuffIllustrationForm.value;
+      const handleStuff = new Stuff({
+        ...stuffValues,
+        types: newTypes.map(type => type['@id']),
+        price: typeof stuffValues.price === 'number' ? stuffValues.price.toFixed(2) : undefined,
+        estimatedPrice: typeof stuffValues.estimatedPrice === 'number' ? stuffValues.estimatedPrice.toFixed(2) : undefined,
+        priceEstimatedAt: stuffValues.priceEstimatedAt[0] instanceof Date ? stuffValues.priceEstimatedAt[0].toISOString() : undefined,
+        obtainedAt: stuffValues.obtainedAt[0] instanceof Date ? stuffValues.obtainedAt[0].toISOString() : undefined,
+      });
+
+      this.stuffService.save(handleStuff).subscribe(stuff => {
+        this.stuff = stuff;
+        this.handleIllustrationsToLink()
+          .subscribe(illustrations => {
+            this.illustrations = illustrations;
+            this.activeModal.close(new Stuff({
+              ...this.stuff,
+              illustrations: this.illustrations,
+              types: stuffValues.types,
+            }));
+          });
+      });
+    });
 
     // this.activeModal.close(this.stuff);
   }
@@ -206,17 +206,14 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
   }
 
   private handleIllustrationsToLink(): Observable<StuffIllustration[]> {
-    console.log('GO saved illustrations', this.snapshots);
-
     if (this.snapshots.length > 0) {
-      console.log('this.stuff', this.stuff);
       this.snapshots.forEach(snapshot => snapshot.illustration.stuff = this.stuff['@id']);
-      console.log('illustrations after stuff @id', this.snapshots);
+
       return forkJoin(
         this.snapshots.map(snapshot =>
           this.stuffIllustrationService.save(
             snapshot.illustration,
-            this.dataURItoBlob(snapshot.snapshot.imageAsDataUrl),
+            NewStuffModalComponent.dataURItoBlob(snapshot.snapshot.imageAsDataUrl),
           ),
         )
       ).pipe(
@@ -225,10 +222,11 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
             ),
         ));
     }
+
     return of([]);
   }
 
-  private dataURItoBlob(dataURI) {
+  private static dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
     const ab = new ArrayBuffer(byteString.length);
@@ -239,7 +237,5 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
     }
 
     return new Blob([ab], {type: mimeString});
-
-
   }
 }

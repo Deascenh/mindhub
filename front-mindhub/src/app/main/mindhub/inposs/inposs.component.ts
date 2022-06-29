@@ -3,6 +3,7 @@ import { CoreSidebarService } from '../../../../@core/components/core-sidebar/co
 import { InpossService } from './services/inposs.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewStuffModalComponent } from './new-stuff-modal/new-stuff-modal.component';
+import { Stuff } from './models';
 
 @Component({
   selector: 'app-inposs',
@@ -82,7 +83,9 @@ export class InpossComponent  implements OnInit {
     const modalRef = this._modalService.open(NewStuffModalComponent, options);
 
     modalRef.result.then((r) => {
-      console.warn('result', r);
+      if (r instanceof Stuff) {
+        this.inpossService.getStuffs();
+      }
     }).catch(() => {});
   }
 }
