@@ -26,7 +26,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     collectionOperations={
  *          "get",
  *          "post"={
- *              "denormalization_context"={"groups"={"stuff_illustration_post"}},
+ *              "denormalization_context"={
+ *                  "groups"={"stuff_illustration_post"}
+ *              },
  *              "input_formats"={
                     "multipart"= { "multipart/form-data" }
  *              },

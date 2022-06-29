@@ -9,6 +9,7 @@ import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { StuffTypeService } from '../services/data/stuff-type.service';
 import { FlatpickrOptions } from 'ng2-flatpickr';
 import { StuffService } from '../services/data/stuff.service';
+import { StuffIllustrationService } from '../services/data/stuff-illustration.service';
 
 export interface IllustrationSnapshot {
   illustration: StuffIllustration;
@@ -57,6 +58,7 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private stuffTypeService: StuffTypeService,
     private stuffService: StuffService,
+    private stuffIllustrationService: StuffIllustrationService,
   ) { }
 
   ngOnInit(): void {
@@ -66,8 +68,8 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
         name: ['', [Validators.required]],
         price: [null],
         estimatedPrice: [null],
-        priceEstimatedAt: [null],
-        obtainingMethod: [[], [Validators.required]],
+        priceEstimatedAt: [[]],
+        obtainingMethod: [null, [Validators.required]],
         obtainedAt: [[]],
       },
     );
@@ -117,6 +119,8 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
   submit() {
     this.SIFormSubmitted = true;
 
+    console.log('snapshots', this.snapshots);
+
     if (this.StuffIllustrationForm.valid) {
       console.log('valid', this.StuffIllustrationForm.value);
 
@@ -125,11 +129,19 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
         const handleStuff = new Stuff({
           ...stuffValues,
           types: newTypes.map(type => type['@id']),
+          price: typeof stuffValues.price === 'number' ? stuffValues.price.toFixed(2) : undefined,
+          estimatedPrice: typeof stuffValues.estimatedPrice === 'number' ? stuffValues.estimatedPrice.toFixed(2) : undefined,
           priceEstimatedAt: stuffValues.priceEstimatedAt[0] instanceof Date ? stuffValues.priceEstimatedAt[0].toISOString() : undefined,
           obtainedAt: stuffValues.obtainedAt[0] instanceof Date ? stuffValues.obtainedAt[0].toISOString() : undefined,
         });
 
-        this.stuffService.save(handleStuff).subscribe(stuff => this.stuff = stuff);
+        this.stuffService.save(handleStuff).subscribe(stuff => {
+          this.stuff = stuff;
+          this.handleIllustrationsToLink().subscribe(illustrations => {
+            console.log('saved illustrations', illustrations);
+            this.illustrations = illustrations;
+          });
+        });
       });
     } else {
       console.log('invalid', this.StuffIllustrationForm.value);
@@ -191,5 +203,43 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
     }
 
     return of(handleTypes);
+  }
+
+  private handleIllustrationsToLink(): Observable<StuffIllustration[]> {
+    console.log('GO saved illustrations', this.snapshots);
+
+    if (this.snapshots.length > 0) {
+      console.log('this.stuff', this.stuff);
+      this.snapshots.forEach(snapshot => snapshot.illustration.stuff = this.stuff['@id']);
+      console.log('illustrations after stuff @id', this.snapshots);
+      return forkJoin(
+        this.snapshots.map(snapshot =>
+          this.stuffIllustrationService.save(
+            snapshot.illustration,
+            this.dataURItoBlob(snapshot.snapshot.imageAsDataUrl),
+          ),
+        )
+      ).pipe(
+        map(savedIllustrations =>
+            savedIllustrations.map(illustration => new StuffIllustration(illustration)
+            ),
+        ));
+    }
+    return of([]);
+  }
+
+  private dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], {type: mimeString});
+
+
   }
 }
