@@ -96,6 +96,9 @@ COPY public public/
 COPY src src/
 COPY templates templates/
 
+RUN mkdir -p /srv/api/public/stuff-illustrations
+RUN chown www-data: /srv/api/public/stuff-illustrations
+
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
 	composer dump-autoload --classmap-authoritative --no-dev; \

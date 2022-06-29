@@ -1,8 +1,6 @@
 <!-- Ecommerce Item -->
 <div class="item-img text-center">
-  <a [routerLink]="'/apps/e-commerce/details/' + stuff.id">
-    <img class="img-fluid card-img-top" [src]="stuff.image" alt="img-placeholder" />
-  </a>
+  <img class="img-fluid card-img-top" [src]="mainIllustrationUrl ? mainIllustrationUrl : 'assets/images/backgrounds/chat-bg.svg'" alt="img-placeholder" />
 </div>
 <div class="card-body">
   <div class="item-wrapper">
