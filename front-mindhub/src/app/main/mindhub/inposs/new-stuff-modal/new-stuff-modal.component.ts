@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Stuff, StuffIllustration, StuffType } from '../models';
-import { Observable, Subject } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { WebcamImage, WebcamInitError } from 'ngx-webcam';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { StuffTypeService } from '../services/data/stuff-type.service';
+import { FlatpickrOptions } from 'ng2-flatpickr';
+import { StuffService } from '../services/data/stuff.service';
 
 export interface IllustrationSnapshot {
   illustration: StuffIllustration;
@@ -28,10 +30,20 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
   snapshots: IllustrationSnapshot[] = [];
   errors: WebcamInitError[] = [];
   illustrationsOptions: SwiperConfigInterface = {};
+  datePickrOptions: FlatpickrOptions = {
+    altInput: true,
+    enableTime: true,
+  };
+
+  obtainingMethods: any[] = [
+    { label: 'Acheté', value: 'bought' },
+    { label: 'Obtenu gratuitement', value: 'gotFree' },
+    { label: 'Offert / Donné', value: 'donation' },
+    { label: 'Je ne m\'en souviens plus', value: 'dontRemember' },
+  ];
 
   StuffIllustrationForm: FormGroup;
   SIFormSubmitted = false;
-  typesSelected: StuffType[] = [];
   typesFound: StuffType[] = [];
   searchTypes: Subject<string> = new Subject<string>();
 
@@ -43,29 +55,29 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
   constructor(
     private activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private stuffTypeService: StuffTypeService
+    private stuffTypeService: StuffTypeService,
+    private stuffService: StuffService,
   ) { }
 
   ngOnInit(): void {
     this.StuffIllustrationForm = this.fb.group(
       {
-        name: ['', Validators.required],
-        price: [''],
-        estimatedPrice: [''],
-        priceEstimatedAt: [''],
-        obtainingMethod: ['', [Validators.required]],
-        obtainedAt: ['', [Validators.required]],
-        types:[[]],
+        types:[[], [Validators.required]],
+        name: ['', [Validators.required]],
+        price: [null],
+        estimatedPrice: [null],
+        priceEstimatedAt: [null],
+        obtainingMethod: [[], [Validators.required]],
+        obtainedAt: [[]],
       },
     );
 
     this.searchTypes.pipe(
       debounceTime(300),
+      filter(keyword => !!keyword),
+      tap(() => this.typesFound = []),
       switchMap((name: string) => this.stuffTypeService.getAll({ name: name })),
-    ).subscribe(types => {
-      console.log(types);
-      this.typesFound = types['hydra:member'];
-    });
+    ).subscribe(types => this.typesFound = types['hydra:member']);
   }
 
   ngAfterViewInit(): void {
@@ -103,7 +115,28 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
   }
 
   submit() {
-    this.activeModal.close(this.stuff);
+    this.SIFormSubmitted = true;
+
+    if (this.StuffIllustrationForm.valid) {
+      console.log('valid', this.StuffIllustrationForm.value);
+
+      this.handleTypesToLink().subscribe(newTypes => {
+        const stuffValues = this.StuffIllustrationForm.value;
+        const handleStuff = new Stuff({
+          ...stuffValues,
+          types: newTypes.map(type => type['@id']),
+          priceEstimatedAt: stuffValues.priceEstimatedAt[0] instanceof Date ? stuffValues.priceEstimatedAt[0].toISOString() : undefined,
+          obtainedAt: stuffValues.obtainedAt[0] instanceof Date ? stuffValues.obtainedAt[0].toISOString() : undefined,
+        });
+
+        this.stuffService.save(handleStuff).subscribe(stuff => this.stuff = stuff);
+      });
+    } else {
+      console.log('invalid', this.StuffIllustrationForm.value);
+      console.log('invalid', this.StuffIllustrationForm.errors);
+    }
+
+    // this.activeModal.close(this.stuff);
   }
 
   toggleCamera() {
@@ -139,6 +172,24 @@ export class NewStuffModalComponent implements OnInit, AfterViewInit {
    * @param name
    */
   selectAddTypeMethod(name) {
-    return new StuffType({ name: name});
+    return new StuffType({ name: name });
+  }
+
+  private handleTypesToLink(): Observable<StuffType[]> {
+    const handleTypes = this.StuffIllustrationForm.get('types').value;
+    const newTypes = handleTypes.filter(type => !!!type['@id']);
+
+    if (newTypes.length > 0) {
+      return forkJoin(newTypes.map(type => this.stuffTypeService.save(type)))
+        .pipe(
+          map(savedTypes => [
+            ...handleTypes.filter(type => !!type['@id']),
+            ...savedTypes,
+          ]),
+          tap(types => this.StuffIllustrationForm.patchValue({ types: types })),
+        );
+    }
+
+    return of(handleTypes);
   }
 }

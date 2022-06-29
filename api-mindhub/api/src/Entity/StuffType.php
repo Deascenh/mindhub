@@ -11,6 +11,8 @@ use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity
@@ -37,6 +39,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *          },
  *     },
  * )
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "name": "ipartial",
+ * })
  */
 class StuffType
 {

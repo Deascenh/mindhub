@@ -34,7 +34,7 @@ export class StuffTypeService {
             return this.api.put(StuffTypeService.makePath(stuffType.id), stuffType)
                 .pipe(map(data => new StuffType(data)));
         } else {
-            return this.api.post(StuffTypeService.path, StuffType)
+            return this.api.post(StuffTypeService.path, stuffType)
                 .pipe(map(data => new StuffType(data)));
         }
     }

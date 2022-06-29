@@ -17,12 +17,11 @@
       </webcam>
 
       <div class="flex text-center">
-        <button
-          type="button"
-          class="btn btn-lg"
-          [class]="cameraOn ? 'btn-success mr-2' : 'btn-primary'"
-          (click)="cameraOn ? triggerSnapshot() : toggleCamera()"
-          rippleEffect>
+        <button type="button"
+                class="btn btn-lg"
+                [class]="cameraOn ? 'btn-success mr-2' : 'btn-primary'"
+                (click)="cameraOn ? triggerSnapshot() : toggleCamera()"
+                rippleEffect>
           <span class="mr-25 feather-btn-lg" [data-feather]="'camera'"></span>
           {{ cameraOn ? 'Capture' : 'Camera' }}
         </button>
@@ -44,7 +43,8 @@
           <div class="swiper-slide rounded" *ngFor="let iSnapshot of snapshots; let index = index">
             <img class="img-fluid" [src]="iSnapshot.snapshot.imageAsDataUrl" [alt]="'snapshot-' + index">
             <div class="snapshot-controls">
-              <a class="mr-50" [class]="iSnapshot.illustration.main ? 'text-warning' : 'text-muted'" (click)="asMain(iSnapshot)">
+              <a class="mr-50" [class]="iSnapshot.illustration.main ? 'text-warning' : 'text-muted'"
+                 (click)="asMain(iSnapshot)">
                 <span class="ficon font-medium-5 icon-star feather"></span>
               </a>
               <a class="text-danger" (click)="remove(iSnapshot)">
@@ -62,21 +62,22 @@
     </div>
 
     <div class="col-12">
-      <form [formGroup]="StuffIllustrationForm">
+      <form [formGroup]="StuffIllustrationForm" (ngSubmit)="submit()">
         <h6 class="mb-2">1. Types</h6>
         <div class="row">
           <div class="col-12">
-            <div class="form-group">
               <label>Ce qui caractérise le truc</label>
-              <ng-select
-                [items]="typesFound"
-                [typeahead]="searchTypes"
-                [addTag]="selectAddTypeMethod"
-                [hideSelected]="true"
-                multiple="true"
-                bindLabel="name"
-                formControlName="types"></ng-select>
-            </div>
+              <ng-select [items]="typesFound"
+                         [typeahead]="searchTypes"
+                         [addTag]="selectAddTypeMethod"
+                         [hideSelected]="true"
+                         multiple="true"
+                         bindLabel="name"
+                         formControlName="types"
+                         [class.error]="SIFormSubmitted && SIForm.types.errors"></ng-select>
+              <div *ngIf="SIFormSubmitted && SIForm.types.errors" class="invalid-feedback">
+                <div *ngIf="SIForm.types.errors.required">Il faut associer au moins 1 type !</div>
+              </div>
           </div>
           <div class="col-12">
             <h6 class="mb-2">2. Personal Info</h6>
@@ -84,12 +85,11 @@
           <div class="col-12">
             <div class="form-group">
               <label for="name">Nom</label>
-              <input
-                type="text"
-                id="name"
-                formControlName="name"
-                class="form-control"
-                [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.name.errors }"/>
+              <input type="text"
+                     id="name"
+                     formControlName="name"
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.name.errors }"/>
               <div *ngIf="SIFormSubmitted && SIForm.name.errors" class="invalid-feedback">
                 <div *ngIf="SIForm.name.errors.required">Ce nom est requis !</div>
               </div>
@@ -98,86 +98,74 @@
           <div class="col-12">
             <div class="form-group">
               <label for="price">Prix <span class="text-muted">(Valeur à l'achat, à date)</span></label>
-              <input
-                type="number"
-                id="price"
-                formControlName="price"
-                class="form-control"
-                [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.price.errors }"/>
+              <input type="number"
+                     id="price"
+                     formControlName="price"
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.price.errors }"/>
             </div>
           </div>
           <div class="col-12">
             <div class="form-group">
-              <label for="estimatedPrice">Prix estimé<span class="text-muted">(Si "Prix" inconnu)></span></label>
-              <input
-                type="number"
-                id="estimatedPrice"
-                formControlName="estimatedPrice"
-                class="form-control"
-                [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.estimatedPrice.errors }"/>
+              <label for="estimatedPrice">
+                Prix Estimé <span class="text-muted">(Si "Prix" inconnu)</span>
+              </label>
+              <input type="number"
+                     id="estimatedPrice"
+                     formControlName="estimatedPrice"
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.estimatedPrice.errors }"/>
             </div>
           </div>
           <div class="col-12">
             <div class="form-group">
               <label for="priceEstimatedAt">Prix Estimé à la date du</label>
-              <ng2-flatpickr
-                id="priceEstimatedAt"
-                [config]="{
-                  altInput: true,
-                  enableTime: true
-                }"
-                formControlName="priceEstimatedAt"
-                required
-                [class.error]="SIFormSubmitted && SIForm.priceEstimatedAt.errors"></ng2-flatpickr>
+              <ng2-flatpickr id="priceEstimatedAt"
+                             [config]="datePickrOptions"
+                             formControlName="priceEstimatedAt"
+                             [class.error]="SIFormSubmitted && SIForm.priceEstimatedAt.errors"></ng2-flatpickr>
               <div *ngIf="SIFormSubmitted && SIForm.priceEstimatedAt.errors"
                    class="invalid-feedback">
-                <div *ngIf="SIForm.priceEstimatedAt.errors.required">La date de la dernière estimation est requise !</div>
+                <div *ngIf="SIForm.priceEstimatedAt.errors.required">
+                  La date de la dernière estimation est requise !
+                </div>
               </div>
             </div>
           </div>
           <div class="col-12">
             <div class="form-group">
               <label for="obtainingMethod">Méthode d'obtention</label>
-              <select
-                id="obtainingMethod"
-                formControlName="obtainingMethod"
-                class="form-control"
-                [ngClass]="{ 'is-invalid': SIFormSubmitted && SIForm.obtainingMethod.errors }"
-              >
-                <option selected value="bought">Acheté</option>
-                <option value="gotFree">Obtenu gratuitement</option>
-                <option value="donation">Offert / Donné</option>
-                <option value="dontRemember">Je ne m'en souviens plus</option>
-              </select>
-              <div *ngIf="SIFormSubmitted && SIForm.obtainingMethod.errors"
-                   class="invalid-feedback">
-                <div *ngIf="SIForm.obtainingMethod.errors.required">Il faut indiquer par quel moyen l'objet à été obtenu !</div>
+              <ng-select [items]="obtainingMethods"
+                         id="obtainingMethod"
+                         bindValue="value"
+                         bindLabel="label"
+                         formControlName="obtainingMethod"
+                         [class.error]="SIFormSubmitted && SIForm.obtainingMethod.errors"></ng-select>
+              <div *ngIf="SIFormSubmitted && SIForm.obtainingMethod.errors" class="invalid-feedback">
+                <div *ngIf="SIForm.obtainingMethod.errors.required">Il faut indiquer par quel moyen le truc à été obtenu !</div>
               </div>
             </div>
           </div>
-          <div class="col-12">
+          <div class="col-12 mb-2">
             <div class="form-group">
               <label for="obtainedAt">Date d'obtention</label>
-              <ng2-flatpickr
-                id="obtainedAt"
-                [config]="{
-                  altInput: true,
-                  enableTime: true
-                }"
-                formControlName="obtainedAt"
-                required
-                [class.error]="SIFormSubmitted && SIForm.obtainedAt.errors"></ng2-flatpickr>
+              <ng2-flatpickr id="obtainedAt"
+                             formControlName="obtainedAt"
+                             [config]="datePickrOptions"
+                             [class.error]="SIFormSubmitted && SIForm.obtainedAt.errors"></ng2-flatpickr>
               <div *ngIf="SIFormSubmitted && SIForm.obtainedAt.errors" class="invalid-feedback">
                 <div *ngIf="SIForm.obtainedAt.errors.required">La date d'obtention est requise !</div>
               </div>
             </div>
           </div>
         </div>
+        <div class="col-12 mb-2 text-center">
+          <button type="submit"
+                  class="btn btn-primary">
+            Sauvegarder
+          </button>
+        </div>
       </form>
     </div>
   </div>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-primary"
-          (click)="submit()">Sauvegarder</button>
 </div>
